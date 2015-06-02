@@ -1,4 +1,4 @@
-# protomux - Protocol Multiplexing
+# multistream-select - self-described protocol multiplexing
 
 Friendly protocol multiplexing.
 
