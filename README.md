@@ -1,17 +1,16 @@
 # multistream - self-describing protocol streams
 
-multistream is a format -- or simple protocol -- for disambiguating other
-streams. It is extremely simple.
+multistream is a format -- or simple protocol -- for disambiguating, and
+layering streams. It is extremely simple.
 
 multistream is one of the `multi-protocols`, a set of protocols that solve
 problems with self-description.
 
 ## Motivation
 
-To decode an incoming stream of data, a program must either (a) know the
-format of the data a priori, or (b) learn the format from the data itself.
-(a) precludes running protocols that may provide one of many kinds of formats
-without prior agreement on which. multistream makes (b) neat using self-description.
+To decode an incoming stream of data, a program must either (a) know the format of the data a priori, or (b) learn the format from the data itself. (a) precludes running protocols that may provide one of many kinds of formats without prior agreement on which. multistream makes (b) neat using self-description.
+
+Moreover, this self-description allows straightforward layering of protocols without having to implement support in the parent (or encapsulating) one.
 
 ## How it works - Protocol Description
 
@@ -59,7 +58,7 @@ An example of a good path name is:
 An example of a _great_ path name is:
 
 ```
-/ipfs/Qmaa4Rw81a3a1VEx4LxB7HADUAXvZFhCoRdBzsMZyZmqHD/ipfs.proto
+/ipfs/Qmaa4Rw81a3a1VEx4LxB7HADUAXvZFhCoRdBzsMZyZmqHD/ipfs.protocol
 /http/w3id.org/ipfs/ipfs-1.1.0.json
 ```
 
