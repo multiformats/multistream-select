@@ -8,6 +8,70 @@ Some protocols have sub-protocols or protocol-suites. Often, these sub protocols
 
 What if there was a protocol that allowed mounting or nesting other protocols, and made it easy to select which protocol to use. (This is sort of like ports, but managed at the protocol level -- not the OS -- and human readable).
 
+### Protocol
+
+The actual protocol is very simple. It is a multistream protocol itself, so it has a multistream header. And it has a set of other protocols available to be used by the remote side. The remote side must enter:
+
+```
+<multistream-header-for-multistream-select>
+<multistream-header-for-whatever-protocol-is-then-selected>
+```
+
+for example:
+
+```
+/ipfs/QmdRKVhvzyATs3L6dosSb6w8hKuqfZK2SyPVqcYJ5VLYa2/multistream-select/0.3.0
+/ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
+```
+
+- The `<multistream-header-for-multistream-select>` ensures a protocol selection is happening.
+- The `<multistream-header-for-whatever-protocol-is-then-selected>` hopefully describes a valid protocol listed. Otherwise we return an error.
+
+#### Listing
+
+It is also possible to "list" the available protocols. A list message is simply just three characters: `ls\n`, so a remote side asking for a protocol listing would look like this:
+
+```sh
+# request
+<multistream-header-for-multistream-select>
+ls\n
+
+# response
+# TODO: maybe include a varint number of protocols here ?
+<multistream-header-for-multistream-select>
+<multistream-header-of-available-protocol>
+<multistream-header-of-available-protocol>
+<multistream-header-of-available-protocol>
+...
+```
+
+For example
+
+```sh
+# send request
+> /ipfs/QmdRKVhvzyATs3L6dosSb6w8hKuqfZK2SyPVqcYJ5VLYa2/multistream-select/0.3.0
+> ls
+
+# get response
+< /ipfs/QmdRKVhvzyATs3L6dosSb6w8hKuqfZK2SyPVqcYJ5VLYa2/multistream-select/0.3.0
+< /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
+< /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/1.0.0
+< /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-bitswap/0.4.3
+< /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-bitswap/1.0.0
+
+# send selection, upgrade connection, and start protocol traffic
+> /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
+> <ipfs-dht-request-0>
+> <ipfs-dht-request-1>
+> ...
+
+# receive selection, and upgraded protocol traffic.
+< /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
+< <ipfs-dht-response-0>
+< <ipfs-dht-response-1>
+< ...
+```
+
 ### Example
 
 ```
