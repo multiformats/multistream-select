@@ -25,7 +25,26 @@ for example:
 ```
 
 - The `<multistream-header-for-multistream-select>` ensures a protocol selection is happening.
-- The `<multistream-header-for-whatever-protocol-is-then-selected>` hopefully describes a valid protocol listed. Otherwise we return an error.
+- The `<multistream-header-for-whatever-protocol-is-then-selected>` hopefully describes a valid protocol listed. Otherwise we return a "not available" error:
+
+```
+na\n
+```
+
+for example:
+
+```
+> /ipfs/QmdRKVhvzyATs3L6dosSb6w8hKuqfZK2SyPVqcYJ5VLYa2/multistream-select/0.3.0
+> /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/some-protocol-that-is-not-available
+< /ipfs/QmdRKVhvzyATs3L6dosSb6w8hKuqfZK2SyPVqcYJ5VLYa2/multistream-select/0.3.0
+< na
+> /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
+> <dht-traffic>
+> ...
+< /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
+< <dht-traffic>
+< ...
+```
 
 #### Listing
 
