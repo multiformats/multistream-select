@@ -33,14 +33,21 @@ na\n
 
 for example:
 
-```
+```sh
+# open connection + send multistream headers, inc for a protocol not available
 > /ipfs/QmdRKVhvzyATs3L6dosSb6w8hKuqfZK2SyPVqcYJ5VLYa2/multistream-select/0.3.0
 > /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/some-protocol-that-is-not-available
+
+# open connection + signal protocol not available.
 < /ipfs/QmdRKVhvzyATs3L6dosSb6w8hKuqfZK2SyPVqcYJ5VLYa2/multistream-select/0.3.0
 < na
+
+# send a selection of a valid protocol + upgrade the conn and send traffic
 > /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
 > <dht-traffic>
 > ...
+
+# receive a selection of the protocol + sent traffic
 < /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
 < <dht-traffic>
 < ...
