@@ -41,6 +41,21 @@ So the full protocol is:
 <arbitrary-stream-data>
 ```
 
+For example:
+
+```
+# this header:
+
+/echo/1.0
+
+# with hexdump -C style inspection:
+0a 2f 65 63 68 6f 2f 31  2e 30 0a                 |./echo/1.0.|
+
+0a    - varint hdr len   10 bytes
+2f-30 - "/echo/1.0"       9 bytes
+0a    - newline           1 byte
+```
+
 ### The protocol path
 
 `multistream` allows us to specify different protocols in a universal namespace, that way being able to recognize, multiplex, and embed them easily. We use the notion of a `path` instead of an `id` becuase it is meant to be a Unix-friendly URI.
