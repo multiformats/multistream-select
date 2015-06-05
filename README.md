@@ -28,7 +28,7 @@ The header has three parts:
 ```
 - `hdr-len` - a varint length, in bytes, for security and binary protocols.
 - `path` - the path of the protocol in a universal namespace. UTF-8. must start with a slash.
-- `\n` - a newline at the end, for the benefit of text protocols.
+- `\n` - a newline at the end, for the benefit of text protocols (included in hdr-len).
 ```
 
 It looks like this:
