@@ -43,7 +43,7 @@ So the full protocol is:
 
 For example:
 
-```
+```sh
 # this header:
 
 /echo/1.0
