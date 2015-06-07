@@ -29,6 +29,9 @@ for example:
 
 ```
 na\n
+
+# in hex (note the varint prefix = 3)
+0x036e610a
 ```
 
 for example:
@@ -55,7 +58,16 @@ for example:
 
 #### Listing
 
-It is also possible to "list" the available protocols. A list message is simply just three characters: `ls\n`, so a remote side asking for a protocol listing would look like this:
+It is also possible to "list" the available protocols. A list message is simply:
+
+```
+ls\n
+
+# in hex (note the varint prefix = 3)
+0x036c730a
+```
+
+So a remote side asking for a protocol listing would look like this:
 
 ```sh
 # request
