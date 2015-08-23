@@ -1,9 +1,13 @@
-# multistream - self-describing protocol streams
+multicodec
+==========
 
-multistream is a format -- or simple protocol -- for disambiguating, and
-layering streams. It is extremely simple.
+[![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io) [![](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](http://ipfs.io/) [![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
 
-multistream is one of the `multi-protocols`, a set of protocols that solve
+> self-describing protocol/encoding streams (note: a file is a stream)
+
+multicodec is a format -- or simple protocol -- for disambiguating, and layering streams. It is extremely simple.
+
+multicodec is one of the `multi-protocols`, a set of protocols that solve
 problems with self-description.
 
 ## Motivation
@@ -14,7 +18,7 @@ Moreover, this self-description allows straightforward layering of protocols wit
 
 ## How it works - Protocol Description
 
-A `multistream` stream MUST begin with a simple header, followed by an arbitrary stream of data for the specified protocol:
+A `multicodec` stream MUST begin with a simple header, followed by an arbitrary stream of data for the specified protocol:
 
 ```
 <header>
@@ -30,6 +34,7 @@ The header has three parts:
 - `\n` - a newline at the end, for the benefit of text protocols **(included in hdr-len)**.
 
 It looks like this:
+
 ```
 <hdr-len><path>\n
 ```
@@ -58,7 +63,7 @@ For example:
 
 ### The protocol path
 
-`multistream` allows us to specify different protocols in a universal namespace, that way being able to recognize, multiplex, and embed them easily. We use the notion of a `path` instead of an `id` becuase it is meant to be a Unix-friendly URI.
+`multicodec` allows us to specify different protocols in a universal namespace, that way being able to recognize, multiplex, and embed them easily. We use the notion of a `path` instead of an `id` because it is meant to be a Unix-friendly URI.
 
 A good path name should be decipherable -- meaning that if some machine or developer -- who has no idea about your protocol -- encounters the path string, they should be able to look it up and resolve how to use it.
 
@@ -75,10 +80,10 @@ An example of a _great_ path name is:
 /http/w3id.org/ipfs/ipfs-1.1.0.json
 ```
 
-These path names happen to be resolvable -- not just in a "multistream muxer" but -- in the internet as a whole (provided the program (or OS) knows how to use the `/ipfs` and `/http` protocols).
+These path names happen to be resolvable -- not just in a "multicodec muxer(e.g [multistream]())" but -- in the internet as a whole (provided the program (or OS) knows how to use the `/ipfs` and `/http` protocols).
 
 ## Implementations
 
-- go-multistream (WIP)
-- node-multistream (WIP)
-
+- [go-multicodec](https://github.com/jbenet/go-multicodec)
+- [go-multistream](https://github.com/whyrusleeping/go-multistream) - Implements multistream, which uses multicodec for stream negotiation
+- [node-multistream](https://github.com/diasdavid/multistream) - Implements multistream, which uses multicodec for stream negotiation
