@@ -1,6 +1,9 @@
-# multistream-select - self-described protocol multiplexing
+multistream
+===========
 
-Friendly protocol multiplexing.
+[![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io) [![](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](http://ipfs.io/) [![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
+
+> Friendly protocol multiplexing. It enables a multicodec to be negotiated between two entities.
 
 ## Motivation
 
@@ -10,34 +13,34 @@ What if there was a protocol that allowed mounting or nesting other protocols, a
 
 ### Protocol
 
-The actual protocol is very simple. It is a multistream protocol itself, so it has a multistream header. And it has a set of other protocols available to be used by the remote side. The remote side must enter:
+The actual protocol is very simple. It is a multistream protocol itself, it has a multicodec header. And it has a set of other protocols available to be used by the remote side. The remote side must enter:
 
 ```
-<multistream-header-for-multistream-select>
-<multistream-header-for-whatever-protocol-is-then-selected>
+> <multicodec-header-of-multistream>
+> <multicodec-header-for-whatever-protocol-that-we-want-to-speak>
 ```
 
 for example:
 
 ```
-/ipfs/QmdRKVhvzyATs3L6dosSb6w8hKuqfZK2SyPVqcYJ5VLYa2/multistream-select/0.3.0
-/ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
+> /ipfs/QmdRKVhvzyATs3L6dosSb6w8hKuqfZK2SyPVqcYJ5VLYa2/multistream-select/0.3.0
+> /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
 ```
 
-- The `<multistream-header-for-multistream-select>` ensures a protocol selection is happening.
-- The `<multistream-header-for-whatever-protocol-is-then-selected>` hopefully describes a valid protocol listed. Otherwise we return a "not available" error:
+- The `<multicodec-header-of-multistream>` ensures a protocol selection is happening.
+- The `<multistream-header-for-whatever-protocol-is-then-selected>` hopefully describes a valid protocol listed. Otherwise we return a `na`("not available") error:
 
 ```
 na\n
 
 # in hex (note the varint prefix = 3)
-0x036e610a
+# 0x036e610a
 ```
 
 for example:
 
 ```sh
-# open connection + send multistream headers, inc for a protocol not available
+# open connection + send multicodec headers, inc for a protocol not available
 > /ipfs/QmdRKVhvzyATs3L6dosSb6w8hKuqfZK2SyPVqcYJ5VLYa2/multistream-select/0.3.0
 > /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/some-protocol-that-is-not-available
 
@@ -76,10 +79,10 @@ ls\n
 
 # response
 # TODO: maybe include a varint number of protocols here ?
-<multistream-header-for-multistream-select>
-<multistream-header-of-available-protocol>
-<multistream-header-of-available-protocol>
-<multistream-header-of-available-protocol>
+<multicodec-for-multistream>
+<multicodec-of-available-protocol>
+<multicodec-of-available-protocol>
+<multicodec-of-available-protocol>
 ...
 ```
 
