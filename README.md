@@ -58,7 +58,7 @@ For example:
 
 ### The protocol path
 
-`multistream` allows us to specify different protocols in a universal namespace, that way being able to recognize, multiplex, and embed them easily. We use the notion of a `path` instead of an `id` becuase it is meant to be a Unix-friendly URI.
+`multistream` allows us to specify different protocols in a universal namespace, that way being able to recognize, multiplex, and embed them easily. We use the notion of a `path` instead of an `id` because it is meant to be a Unix-friendly URI.
 
 A good path name should be decipherable -- meaning that if some machine or developer -- who has no idea about your protocol -- encounters the path string, they should be able to look it up and resolve how to use it.
 
@@ -75,7 +75,7 @@ An example of a _great_ path name is:
 /http/w3id.org/ipfs/ipfs-1.1.0.json
 ```
 
-These path names happen to be resolvable -- not just in a "multistream muxer" but -- in the internet as a whole (provided the program (or OS) knows how to use the `/ipfs` and `/http` protocols).
+These path names happen to be resolvable -- not just in a "multistream muxer" -- but in the internet as a whole (provided the program (or OS) knows how to use the `/ipfs` and `/http` protocols).
 
 ## Implementations
 
