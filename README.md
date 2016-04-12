@@ -1,7 +1,9 @@
 multistream
 ===========
 
-[![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io) [![](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](http://ipfs.io/) [![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
+[![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
+[![](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](http://ipfs.io/)
+[![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
 
 > Friendly protocol multiplexing. It enables a multicodec to be negotiated between two entities.
 
@@ -145,3 +147,9 @@ For example
 <
 < Hello World
 ```
+
+# Implementations
+
+- [js-multistream](https://github.com/diasdavid/js-multistream) - JavaScript Implementation
+- [go-multistream](https://github.com/whyrusleeping/go-multistream) - Go Implementation
+- [mss-nc](https://github.com/whyrusleeping/mss-nc) - multistream netcat written in Go
