@@ -61,6 +61,10 @@ for example:
 < ...
 ```
 
+**Note 1:** Every multistream message is a "length-prefixed-message", which means that every message is preprended by a varint that describes the size of the message.
+
+**Node 2:** Every multistream message is appended by a `\n` character, this character is included in the byte count that is accounted by the prepended varint.
+
 #### Listing
 
 It is also possible to "list" the available protocols. A list message is simply:
@@ -80,8 +84,7 @@ So a remote side asking for a protocol listing would look like this:
 ls\n
 
 # response
-# TODO: maybe include a varint number of protocols here ?
-<multicodec-for-multistream>
+<varint-total-response-size-in-bytes><varint-number-of-protocols>
 <multicodec-of-available-protocol>
 <multicodec-of-available-protocol>
 <multicodec-of-available-protocol>
@@ -146,6 +149,16 @@ For example
 < Content-Length: 12
 <
 < Hello World
+```
+
+### ls example in detail
+
+```
+> <varint-length>ls<newline>
+< <varint-total-response-size-in-bytes><varint-number-of-protocols><newline>
+< <varint-protocol-length-plus-new-line><protocol><newline>
+# ...
+< <varint-protocol-length-plus-new-line><protocol><newline>
 ```
 
 # Implementations
