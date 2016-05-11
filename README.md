@@ -1,84 +1,170 @@
-# multistream - self-describing protocol streams
+multistream
+===========
 
-multistream is a format -- or simple protocol -- for disambiguating, and
-layering streams. It is extremely simple.
+[![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
+[![](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](http://ipfs.io/)
+[![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
 
-multistream is one of the `multi-protocols`, a set of protocols that solve
-problems with self-description.
+> Friendly protocol multiplexing. It enables a multicodec to be negotiated between two entities.
 
 ## Motivation
 
-To decode an incoming stream of data, a program must either (a) know the format of the data a priori, or (b) learn the format from the data itself. (a) precludes running protocols that may provide one of many kinds of formats without prior agreement on which. multistream makes (b) neat using self-description.
+Some protocols have sub-protocols or protocol-suites. Often, these sub protocols are optional extensions. Selecting which protocol to use -- or even knowing what is available to chose from -- is not simple.
 
-Moreover, this self-description allows straightforward layering of protocols without having to implement support in the parent (or encapsulating) one.
+What if there was a protocol that allowed mounting or nesting other protocols, and made it easy to select which protocol to use. (This is sort of like ports, but managed at the protocol level -- not the OS -- and human readable).
 
-## How it works - Protocol Description
+### Protocol
 
-A `multistream` stream MUST begin with a simple header, followed by an arbitrary stream of data for the specified protocol:
-
-```
-<header>
-<arbitrary-stream-data>
-```
-
-### The header
-
-The header has three parts:
-
-- `hdr-len` - a varint length, in bytes, for security and binary protocols.
-- `path` - the path of the protocol in a universal namespace. UTF-8. must start with a slash.
-- `\n` - a newline at the end, for the benefit of text protocols **(included in hdr-len)**.
-
-It looks like this:
-```
-<hdr-len><path>\n
-```
-
-So the full protocol is:
+The actual protocol is very simple. It is a multistream protocol itself, it has a multicodec header. And it has a set of other protocols available to be used by the remote side. The remote side must enter:
 
 ```
-<hdr-len><path>\n
-<arbitrary-stream-data>
+> <multicodec-header-of-multistream>
+> <multicodec-header-for-whatever-protocol-that-we-want-to-speak>
 ```
 
-For example:
+for example:
+
+```
+> /ipfs/QmdRKVhvzyATs3L6dosSb6w8hKuqfZK2SyPVqcYJ5VLYa2/multistream-select/0.3.0
+> /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
+```
+
+- The `<multicodec-header-of-multistream>` ensures a protocol selection is happening.
+- The `<multistream-header-for-whatever-protocol-is-then-selected>` hopefully describes a valid protocol listed. Otherwise we return a `na`("not available") error:
+
+```
+na\n
+
+# in hex (note the varint prefix = 3)
+# 0x036e610a
+```
+
+for example:
 
 ```sh
-# this header:
+# open connection + send multicodec headers, inc for a protocol not available
+> /ipfs/QmdRKVhvzyATs3L6dosSb6w8hKuqfZK2SyPVqcYJ5VLYa2/multistream-select/0.3.0
+> /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/some-protocol-that-is-not-available
 
-/echo/1.0
+# open connection + signal protocol not available.
+< /ipfs/QmdRKVhvzyATs3L6dosSb6w8hKuqfZK2SyPVqcYJ5VLYa2/multistream-select/0.3.0
+< na
 
-# with hexdump -C style inspection:
-0a 2f 65 63 68 6f 2f 31  2e 30 0a                 |./echo/1.0.|
+# send a selection of a valid protocol + upgrade the conn and send traffic
+> /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
+> <dht-traffic>
+> ...
 
-0a    - varint hdr len   10 bytes
-2f-30 - "/echo/1.0"       9 bytes
-0a    - newline           1 byte
+# receive a selection of the protocol + sent traffic
+< /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
+< <dht-traffic>
+< ...
 ```
 
-### The protocol path
+**Note 1:** Every multistream message is a "length-prefixed-message", which means that every message is preprended by a varint that describes the size of the message.
 
-`multistream` allows us to specify different protocols in a universal namespace, that way being able to recognize, multiplex, and embed them easily. We use the notion of a `path` instead of an `id` because it is meant to be a Unix-friendly URI.
+**Node 2:** Every multistream message is appended by a `\n` character, this character is included in the byte count that is accounted by the prepended varint.
 
-A good path name should be decipherable -- meaning that if some machine or developer -- who has no idea about your protocol -- encounters the path string, they should be able to look it up and resolve how to use it.
+#### Listing
 
-An example of a good path name is:
-
-```
-/bittorrent.org/1.0
-```
-
-An example of a _great_ path name is:
+It is also possible to "list" the available protocols. A list message is simply:
 
 ```
-/ipfs/Qmaa4Rw81a3a1VEx4LxB7HADUAXvZFhCoRdBzsMZyZmqHD/ipfs.protocol
-/http/w3id.org/ipfs/ipfs-1.1.0.json
+ls\n
+
+# in hex (note the varint prefix = 3)
+0x036c730a
 ```
 
-These path names happen to be resolvable -- not just in a "multistream muxer" -- but in the internet as a whole (provided the program (or OS) knows how to use the `/ipfs` and `/http` protocols).
+So a remote side asking for a protocol listing would look like this:
 
-## Implementations
+```sh
+# request
+<multistream-header-for-multistream-select>
+ls\n
 
-- go-multistream (WIP)
-- node-multistream (WIP)
+# response
+<varint-total-response-size-in-bytes><varint-number-of-protocols>
+<multicodec-of-available-protocol>
+<multicodec-of-available-protocol>
+<multicodec-of-available-protocol>
+...
+```
 
+For example
+
+```sh
+# send request
+> /ipfs/QmdRKVhvzyATs3L6dosSb6w8hKuqfZK2SyPVqcYJ5VLYa2/multistream-select/0.3.0
+> ls
+
+# get response
+< /ipfs/QmdRKVhvzyATs3L6dosSb6w8hKuqfZK2SyPVqcYJ5VLYa2/multistream-select/0.3.0
+< /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
+< /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/1.0.0
+< /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-bitswap/0.4.3
+< /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-bitswap/1.0.0
+
+# send selection, upgrade connection, and start protocol traffic
+> /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
+> <ipfs-dht-request-0>
+> <ipfs-dht-request-1>
+> ...
+
+# receive selection, and upgraded protocol traffic.
+< /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
+< <ipfs-dht-response-0>
+< <ipfs-dht-response-1>
+< ...
+```
+
+### Example
+
+```
+# greeting
+> /http/multiproto.io/multistream-select/1.0
+< /http/multiproto.io/multistream-select/1.0
+
+# list available protocols
+> /http/multiproto.io/multistream-select/1.0
+> ls
+< /http/google.com/spdy/3
+< /http/w3c.org/http/1.1
+< /http/w3c.org/http/2
+< /http/bittorrent.org/1.2
+< /http/git-scm.org/1.2
+< /http/ipfs.io/exchange/bitswap/1
+< /http/ipfs.io/routing/dht/2.0.2
+< /http/ipfs.io/network/relay/0.5.2
+
+# select protocol
+> /http/multiproto.io/multistream-select/1.0
+> ls
+> /http/w3id.org/http/1.1
+> GET / HTTP/1.1
+>
+< /http/w3id.org/http/1.1
+< HTTP/1.1 200 OK
+< Content-Type: text/html; charset=UTF-8
+< Content-Length: 12
+<
+< Hello World
+```
+
+### ls example in detail
+
+```
+> <varint-length>ls<newline>
+< <varint-length><varint-of-list-of-protos-size-in-bytes><varint-number-of-protocols><newline>
+< <varint-length><protocol><newline>
+# ...
+< <varint-length><protocol><newline>
+```
+
+Note: Each `varint-length` contains the size of the rest of the line, including the newline bytes
+
+# Implementations
+
+- [js-multistream](https://github.com/diasdavid/js-multistream) - JavaScript Implementation
+- [go-multistream](https://github.com/whyrusleeping/go-multistream) - Go Implementation
+- [mss-nc](https://github.com/whyrusleeping/mss-nc) - multistream netcat written in Go
