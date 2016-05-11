@@ -155,11 +155,13 @@ For example
 
 ```
 > <varint-length>ls<newline>
-< <varint-total-response-size-in-bytes><varint-number-of-protocols><newline>
-< <varint-protocol-length-plus-new-line><protocol><newline>
+< <varint-length><varint-of-list-of-protos-size-in-bytes><varint-number-of-protocols><newline>
+< <varint-length><protocol><newline>
 # ...
-< <varint-protocol-length-plus-new-line><protocol><newline>
+< <varint-length><protocol><newline>
 ```
+
+Note: Each `varint-length` contains the size of the rest of the line, including the newline bytes
 
 # Implementations
 
