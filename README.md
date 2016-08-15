@@ -1,11 +1,22 @@
-multistream-select
-==================
+# multistream-select
 
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
-[![](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](http://ipfs.io/)
+[![](https://img.shields.io/badge/project-multiformats-blue.svg?style=flat-square)](http://github.com/multiformats/multiformats)
 [![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
 
 > Friendly protocol multiplexing. It enables a multicodec to be negotiated between two entities.
+
+## Table of Contents
+
+- [Motivation](#motivation)
+  - [Protocol](#protocol)
+    - [Listing](#listing)
+  - [Example](#example)
+  - [ls example in detail](#ls-example-in-detail)
+- [Implementations](#implementations)
+- [Maintainers](#maintainers)
+- [Contribute](#contribute)
+- [License](#license)
 
 ## Motivation
 
@@ -163,8 +174,22 @@ For example
 
 Note: Each `varint-length` contains the size of the rest of the line, including the newline bytes
 
-# Implementations
+## Implementations
 
 - [js-multistream](https://github.com/multiformats/js-multistream) - JavaScript Implementation
 - [go-multistream](https://github.com/multiformats/go-multistream) - Go Implementation
 - [mss-nc](https://github.com/whyrusleeping/mss-nc) - multistream-select netcat written in Go
+
+## Maintainers
+
+Captain: [@diasdavid](https://github.com/diasdavid).
+
+## Contribute
+
+Contributions welcome. Please check out [the issues](https://github.com/multiformats/multistream-select/issues).
+
+Check out our [contributing document](https://github.com/multiformats/multiformats/blob/master/contributing.md) for more information on how we work, and about contributing in general. Please be aware that all interactions related to multiformats are subject to the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
+
+## License
+
+[MIT](LICENSE) © Protocol Labs Inc.
