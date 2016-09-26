@@ -1,5 +1,5 @@
-multistream
-===========
+multistream-select
+==================
 
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
 [![](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](http://ipfs.io/)
@@ -18,8 +18,8 @@ What if there was a protocol that allowed mounting or nesting other protocols, a
 The actual protocol is very simple. It is a multistream protocol itself, it has a multicodec header. And it has a set of other protocols available to be used by the remote side. The remote side must enter:
 
 ```
-> <multicodec-header-of-multistream>
-> <multicodec-header-for-whatever-protocol-that-we-want-to-speak>
+> <multistream-header>
+> <multistream-header-for-whatever-protocol-that-we-want-to-speak>
 ```
 
 for example:
@@ -29,7 +29,7 @@ for example:
 > /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
 ```
 
-- The `<multicodec-header-of-multistream>` ensures a protocol selection is happening.
+- The `<multistream-header-of-multistream>` ensures a protocol selection is happening.
 - The `<multistream-header-for-whatever-protocol-is-then-selected>` hopefully describes a valid protocol listed. Otherwise we return a `na`("not available") error:
 
 ```
