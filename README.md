@@ -165,6 +165,6 @@ Note: Each `varint-length` contains the size of the rest of the line, including 
 
 # Implementations
 
-- [js-multistream-select](https://github.com/diasdavid/js-multistream-select) - JavaScript Implementation
-- [go-multistream-select](https://github.com/whyrusleeping/go-multistream-select) - Go Implementation
+- [js-multistream](https://github.com/multiformats/js-multistream) - JavaScript Implementation
+- [go-multistream](https://github.com/multiformats/go-multistream) - Go Implementation
 - [mss-nc](https://github.com/whyrusleeping/mss-nc) - multistream-select netcat written in Go
