@@ -33,21 +33,21 @@ This is especially useful in environments where connections to arbitrary OS port
 
 ### Protocol
 
-The actual protocol is very simple. It is a multistream protocol itself, it has a multicodec header. And it has a set of other protocols available to be used by the remote side. The remote side must enter:
+The actual protocol is very simple. It is a multistream protocol itself, with a multicodec header. And it has a set of other protocols available to be used by the remote side. The remote side must enter:
 
 ```
-> <multistream-header>
+> <multistream-header-for-multistream>
 > <multistream-header-for-whatever-protocol-that-we-want-to-speak>
 ```
 
 for example:
 
 ```
-> /ipfs/QmdRKVhvzyATs3L6dosSb6w8hKuqfZK2SyPVqcYJ5VLYa2/multistream-select/0.3.0
-> /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
+> /multistream/1.0.0
+> /ipfs/kad/1.0.0
 ```
 
-- The `<multistream-header-of-multistream>` ensures a protocol selection is happening.
+- The `<multistream-header-for-multistream>` ensures a protocol selection is happening.
 - The `<multistream-header-for-whatever-protocol-is-then-selected>` hopefully describes a valid protocol listed. Otherwise we return a `na`("not available") error:
 
 ```
@@ -61,27 +61,29 @@ for example:
 
 ```sh
 # open connection + send multicodec headers, inc for a protocol not available
-> /ipfs/QmdRKVhvzyATs3L6dosSb6w8hKuqfZK2SyPVqcYJ5VLYa2/multistream-select/0.3.0
-> /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/some-protocol-that-is-not-available
+> /multistream/1.0.0
+> /some-protocol-that-is-not-available
 
 # open connection + signal protocol not available.
-< /ipfs/QmdRKVhvzyATs3L6dosSb6w8hKuqfZK2SyPVqcYJ5VLYa2/multistream-select/0.3.0
+< /multistream/1.0.0
 < na
 
 # send a selection of a valid protocol + upgrade the conn and send traffic
-> /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
-> <dht-traffic>
+> /ipfs/kad/1.0.0
+> <kad-dht-traffic>
 > ...
 
 # receive a selection of the protocol + sent traffic
-< /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
-< <dht-traffic>
+< /ipfs/kad/1.0.0
+< <kad-dht-traffic>
 < ...
 ```
 
 **Note 1:** Every multistream message is a "length-prefixed-message", which means that every message is preprended by a varint that describes the size of the message.
 
-**Node 2:** Every multistream message is appended by a `\n` character, this character is included in the byte count that is accounted by the prepended varint.
+**Note 2:** Every multistream message is appended by a `\n` character, this character is included in the byte count that is accounted by the prepended varint.
+
+**Note 3:** Although multistream-select uses a "call and response" pattern to propose and confirm protocol selection, it is possible for both sides to send multistream headers at the same time. This is especially likely for the initial `<multistream-header-for-multistream>`, which both sides may optimistically send as soon as the connection is opened, without waiting for the other side to send it first.
 
 #### Listing
 
@@ -113,26 +115,26 @@ For example
 
 ```sh
 # send request
-> /ipfs/QmdRKVhvzyATs3L6dosSb6w8hKuqfZK2SyPVqcYJ5VLYa2/multistream-select/0.3.0
+> /multistream/1.0.0
 > ls
 
 # get response
-< /ipfs/QmdRKVhvzyATs3L6dosSb6w8hKuqfZK2SyPVqcYJ5VLYa2/multistream-select/0.3.0
-< /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
-< /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/1.0.0
-< /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-bitswap/0.4.3
-< /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-bitswap/1.0.0
+< /multistream/1.0.0
+< /ipfs/kad/0.2.3
+< /ipfs/kad/1.0.0
+< /ipfs/bitswap/0.4.3
+< /ipfs/bitswap/1.0.0
 
 # send selection, upgrade connection, and start protocol traffic
-> /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
-> <ipfs-dht-request-0>
-> <ipfs-dht-request-1>
+> /ipfs/ipfs-dht/0.2.3
+> <kad-dht-request-0>
+> <kad-dht-request-1>
 > ...
 
 # receive selection, and upgraded protocol traffic.
-< /ipfs/QmVXZiejj3sXEmxuQxF2RjmFbEiE9w7T82xDn3uYNuhbFb/ipfs-dht/0.2.3
-< <ipfs-dht-response-0>
-< <ipfs-dht-response-1>
+< /ipfs/kad/0.2.3
+< <kad-dht-response-0>
+< <kad-dht-response-1>
 < ...
 ```
 
