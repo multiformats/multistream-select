@@ -23,7 +23,13 @@
 
 Some protocols have sub-protocols or protocol-suites. Often, these sub protocols are optional extensions. Selecting which protocol to use -- or even knowing what is available to chose from -- is not simple.
 
-What if there was a protocol that allowed mounting or nesting other protocols, and made it easy to select which protocol to use. (This is sort of like ports, but managed at the protocol level -- not the OS -- and human readable).
+What if there was a protocol that allowed mounting or nesting other protocols, and made it easy to select which protocol to use?
+
+At the operating system level, protocol selection is usually accomplished using numbered ports, with some out-of-band agreement on the mapping of port numbers to protocols. For example, HTTP requests will use TCP port 80 unless otherwise specified.
+
+multistream-select brings this concept into the "protocol level", which gives you the flexibility to evolve a mapping of human-readable protocol names to the semantics you need, which may change over time. 
+
+This is especially useful in environments where connections to arbitrary OS ports is difficult or impossible, for example because one or more parties is behind a NAT. In such cases, a single connection with a stream multiplexer will allow you to open many independent communication channels, but you'll need some mechanism for deciding what protocol to use for each channel. If you support multiple stream multiplexers, you can even use multistream-select to decide which one to use in the first place.
 
 ### Protocol
 
