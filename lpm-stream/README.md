@@ -9,7 +9,7 @@ lpm-stream
 
 # Description
 
-length-prefixed-message is a trivial protocol that "packetizes" an arbitrary stream. It is used to wrap arbitrary streams of data as varint-length delimited messages. This ensures the other size can stop.
+length-prefixed-message is a trivial protocol that "packetizes" an arbitrary stream. It is used to wrap arbitrary streams of data as varint-length delimited messages. This ensures the other side can stop.
 
 Related:
 - [msgio](https://github.com/jbenet/go-msgio)
