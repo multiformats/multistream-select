@@ -96,7 +96,7 @@ So a remote side asking for a protocol listing would look like this:
 ls\n
 
 # response
-<varint-total-response-size-in-bytes><varint-number-of-protocols>
+<varint-total-response-size-in-bytes>
 <varint-protocol-length><multicodec-of-available-protocol>\n
 <varint-protocol-length><multicodec-of-available-protocol>\n
 <varint-protocol-length><multicodec-of-available-protocol>\n
@@ -168,7 +168,7 @@ For example
 
 ```
 > <varint-ls-length>ls\n
-< <varint-ls-response-length><varint-number-of-protocols><varint-protocol-length><protocol>\n
+< <varint-ls-response-length><varint-protocol-length><protocol>\n
 < <varint-protocol-length><protocol>\n
 # ...more protocols
 < \n
