@@ -97,10 +97,11 @@ ls\n
 
 # response
 <varint-total-response-size-in-bytes><varint-number-of-protocols>
-<multicodec-of-available-protocol>
-<multicodec-of-available-protocol>
-<multicodec-of-available-protocol>
-...
+<varint-protocol-length><multicodec-of-available-protocol>\n
+<varint-protocol-length><multicodec-of-available-protocol>\n
+<varint-protocol-length><multicodec-of-available-protocol>\n
+# ...more protocols
+\n
 ```
 
 For example
@@ -166,14 +167,16 @@ For example
 ### ls example in detail
 
 ```
-> <varint-length>ls<newline>
-< <varint-length><varint-of-list-of-protos-size-in-bytes><varint-number-of-protocols><newline>
-< <varint-length><protocol><newline>
-# ...
-< <varint-length><protocol><newline>
+> <varint-ls-length>ls\n
+< <varint-ls-response-length><varint-number-of-protocols><varint-protocol-length><protocol>\n
+< <varint-protocol-length><protocol>\n
+# ...more protocols
+< \n
 ```
 
-Note: Each `varint-length` contains the size of the rest of the line, including the newline bytes
+`varint-ls-response-length` is the total size of the response message including _all_ the protocols and the `\n` at the end.
+
+Each protocol is an embedded multistream message (it has a length prefix and a new line suffix). So, unless there are 0 protocols the response will end with `\n\n`.
 
 ## Implementations
 
