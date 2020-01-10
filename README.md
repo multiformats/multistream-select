@@ -33,7 +33,7 @@ This is especially useful in environments where connections to arbitrary OS port
 
 ### Protocol
 
-The actual protocol is very simple. It is a multistream protocol itself, with a multicodec header. And it has a set of other protocols available to be used by the remote side. The remote side must enter:
+The actual protocol is very simple. It is a multistream protocol itself, with a multistream header. And it has a set of other protocols available to be used by the remote side. The remote side must enter:
 
 ```
 > <multistream-header-for-multistream>
@@ -60,7 +60,7 @@ na\n
 for example:
 
 ```sh
-# open connection + send multicodec headers, inc for a protocol not available
+ # open connection + send multistream headers, inc for a protocol not available
 > /multistream/1.0.0
 > /some-protocol-that-is-not-available
 
@@ -126,7 +126,7 @@ For example
 < /ipfs/bitswap/1.0.0
 
 # send selection, upgrade connection, and start protocol traffic
-> /ipfs/ipfs-dht/0.2.3
+> /ipfs/kad/0.2.3
 > <kad-dht-request-0>
 > <kad-dht-request-1>
 > ...
