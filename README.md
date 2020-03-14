@@ -139,6 +139,42 @@ For example
 < ...
 ```
 
+#### Implementation Recommendations
+
+**Protocol Selection**
+
+When selecting a protocol, the initiator SHOULD send the multistream protocol AND the desired protocol in the same packet. Similarly, the responder SHOULD send its first response in the same packet as the multistream protocol.
+
+For example:
+
+```sh
+# successful negotiation of the kad protocol
+> /multistream/1.0.0\n/ipfs/kad/1.0.0\n
+< /multistream/1.0.0\n/ipfs/kad/1.0.0\n
+```
+
+```sh
+# successful negotiation of the kad protocol, with missing version support
+> /multistream/1.0.0\n/ipfs/kad/1.0.0\n
+< /multistream/1.0.0\nna\n
+> /ipfs/kad/0.2.3\n
+< /ipfs/kad/0.2.3\n
+```
+
+**Listing**
+
+When requesting a list of protocols, if the multistream protocol has not yet been negotiated, the initiator SHOULD send the `ls` request in the same packet as the multistream protocol. Similarly, the responder SHOULD send its list of supported protocols in the same packet as the multistream protocol.
+
+For example:
+
+```sh
+# request the list of protocols
+> /multistream/1.0.0\nls\n
+
+# response with supported protocols
+< /multistream/1.0.0\n/ipfs/kad/0.2.3\n/ipfs/kad/1.0.0\n/ipfs/bitswap/0.4.3\n/ipfs/bitswap/1.0.0\n
+```
+
 ### ls example in detail
 
 ```
