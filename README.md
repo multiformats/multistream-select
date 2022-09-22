@@ -139,6 +139,8 @@ For example
 < ...
 ```
 
+Note that `ls` support is OPTIONAL, i.e. implementations MAY support sending and/or receiving `ls`. This in turn implies that implementations MUST NOT depend on a remote node supporting `ls`.
+
 #### Implementation Recommendations
 
 **Protocol Selection**
