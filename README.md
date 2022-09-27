@@ -87,7 +87,7 @@ for example:
 
 #### Listing
 
-It is also possible to "list" the available protocols. A list message is simply:
+Implementations MAY support "listing" of the available protocols. A list message is simply:
 
 ```
 ls\n
@@ -138,6 +138,8 @@ For example
 < <kad-dht-response-1>
 < ...
 ```
+
+Note that `ls` support is OPTIONAL, i.e. implementations MAY support sending and/or receiving `ls`. This in turn implies that implementations MUST NOT depend on a remote node supporting `ls`.
 
 #### Implementation Recommendations
 
