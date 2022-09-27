@@ -87,7 +87,7 @@ for example:
 
 #### Listing
 
-It is also possible to "list" the available protocols. A list message is simply:
+Implementations MAY support "listing" of the available protocols. A list message is simply:
 
 ```
 ls\n
