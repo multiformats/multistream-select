@@ -21,7 +21,7 @@
 
 ## Motivation
 
-Some protocols have sub-protocols or protocol-suites. Often, these sub protocols are optional extensions. Selecting which protocol to use -- or even knowing what is available to chose from -- is not simple.
+Some protocols have sub-protocols or protocol-suites. Often, these sub protocols are optional extensions. Selecting which protocol to use -- or even knowing what is available to choose from -- is not simple.
 
 What if there was a protocol that allowed mounting or nesting other protocols, and made it easy to select which protocol to use?
 
@@ -79,7 +79,7 @@ for example:
 < ...
 ```
 
-**Note 1:** Every multistream message is a "length-prefixed-message", which means that every message is preprended by a varint that describes the size of the message.
+**Note 1:** Every multistream message is a "length-prefixed-message", which means that every message is prepended by a varint that describes the size of the message.
 
 **Note 2:** Every multistream message is appended by a `\n` character, this character is included in the byte count that is accounted by the prepended varint.
 
